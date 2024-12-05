@@ -62,9 +62,9 @@ const Scene = () => {
         <GlassBowlStand position={[0, 3.5, 0]} castShadow receiveShadow/>
 
         {/* Glass Sphere positioned on top of the stand */}
-        {/* <GlassSphere position={[0, 6.5, 0]} castShadow receiveShadow/> */}
+        <GlassSphere position={[0, 6.5, 0]} castShadow receiveShadow/>
 
-        <GlassJar position={[0, 6.5, 0]} />
+        {/* <GlassJar position={[0, 6.5, 0]} /> */}
 
         {/* Giraffe inside the terrarium */}
         <primitive object={obj} position={[0, 6, 0]} scale={0.1} />
