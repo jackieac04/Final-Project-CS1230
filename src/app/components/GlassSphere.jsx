@@ -16,7 +16,7 @@ export default function GlassSphere({ position }) {
 
   return (
     <>
-      <Environment preset="studio" background />
+      {/* <Environment preset="studio" background /> */}
       <group position={position}>
         {/* Outer glass */}
         <mesh castShadow receiveShadow>

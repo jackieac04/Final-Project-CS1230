@@ -42,9 +42,6 @@ const Scene = () => {
           powerPreference: "high-performance",
         }}
       >
-
-
-
         {/* Scene Lights */}
         <Lights />
 
@@ -52,9 +49,8 @@ const Scene = () => {
         <Table />
 
         {/* Terrarium (Glass Sphere) */}
-        <GlassSphere position={[0, 1.5, 0]} />
-        {/* <GlassSphereWater position={[0, 1.5, 0]} /> */}
-
+        {/* <GlassSphere position={[0, 1.5, 0]} /> */}
+        <GlassSphereWater position={[0, 1.5, 0]} />
 
         {/* Aquarium positioned next to the Glass Sphere */}
         {/* <Aquarium position={[2, 0.5, 0]} /> */}
