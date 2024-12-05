@@ -1,7 +1,7 @@
-import React, { useRef, useEffect } from "react";
-import { Canvas, useLoader } from "@react-three/fiber";
+import React, { useRef, useEffect, useState } from "react";
+import { Canvas, useLoader, useThree } from "@react-three/fiber";
 import { OBJLoader } from "three/examples/jsm/loaders/OBJLoader";
-import { OrbitControls } from "@react-three/drei";
+import { Environment, OrbitControls } from "@react-three/drei";
 import { Leva } from "leva";
 import GlassSphere from "./GlassSphere";
 import { MTLLoader } from "three/examples/jsm/loaders/MTLLoader";
@@ -11,6 +11,10 @@ import Lights from "./Lights";
 import Terrain from "./Terrain";
 import GlassSphereWater from "./GlassSphereWater";
 import Aquarium from "./Aquarium";
+import GlassBowlStand from "./GlassBowlStand";
+import TerrainTwo from "./TerrainTwo";
+import CameraSetup from './CameraSetup';
+import GlassJar from "./GlassJar"; 
 
 const Scene = () => {
   const orbitRef = useRef();
@@ -34,6 +38,7 @@ const Scene = () => {
 
   return (
     <>
+      
       <Leva /> {/* UI for adjusting controls */}
       <Canvas
         shadows
@@ -42,28 +47,30 @@ const Scene = () => {
           powerPreference: "high-performance",
         }}
       >
+        <Environment preset="studio" background />
 
-
+        {/* Set camera position */}
+        <CameraSetup />
 
         {/* Scene Lights */}
         <Lights />
 
         {/* Table */}
-        <Table />
+        <Table position={[0, 0, 0]} receiveShadow/>
 
-        {/* Terrarium (Glass Sphere) */}
-        <GlassSphere position={[0, 1.5, 0]} />
-        {/* <GlassSphereWater position={[0, 1.5, 0]} /> */}
+         {/* Glass Bowl Stand */}
+        <GlassBowlStand position={[0, 3.5, 0]} castShadow receiveShadow/>
 
+        {/* Glass Sphere positioned on top of the stand */}
+        {/* <GlassSphere position={[0, 6.5, 0]} castShadow receiveShadow/> */}
 
-        {/* Aquarium positioned next to the Glass Sphere */}
-        {/* <Aquarium position={[2, 0.5, 0]} /> */}
+        <GlassJar position={[0, 6.5, 0]} />
 
         {/* Giraffe inside the terrarium */}
-        <primitive object={obj} position={[0, 1.5, 0]} scale={0.1} />
+        <primitive object={obj} position={[0, 6, 0]} scale={0.1} />
 
         {/* Ground Terrain */}
-        <Terrain />
+        <TerrainTwo receiveShadow/>
 
         {/* Controls */}
         <OrbitControls ref={orbitRef} />

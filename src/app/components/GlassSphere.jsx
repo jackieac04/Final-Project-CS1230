@@ -4,7 +4,7 @@ import { useControls } from "leva";
 
 export default function GlassSphere({ position }) {
   const materialProps = useControls("Glass Material", {
-    thickness: { value: 2.8, min: 0, max: 5, step: 0.1 },
+    thickness: { value: 0.2, min: 0, max: 5, step: 0.1 },
     roughness: { value: 0, min: 0, max: 1, step: 0.1 },
     transmission: { value: 1, min: 0, max: 1, step: 0.1 },
     ior: { value: 1.5, min: 1, max: 3, step: 0.1 },
@@ -16,7 +16,6 @@ export default function GlassSphere({ position }) {
 
   return (
     <>
-      <Environment preset="studio" background />
       <group position={position}>
         {/* Outer glass */}
         <mesh castShadow receiveShadow>

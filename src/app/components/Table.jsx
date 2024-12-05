@@ -2,11 +2,11 @@ import React from "react";
 import { useLoader } from "@react-three/fiber";
 import { TextureLoader } from "three/src/loaders/TextureLoader";
 
-export default function Table() {
+export default function Table({ position }) {
   const woodTexture = useLoader(TextureLoader, "/textures/wood_texture.jpg"); // Load your wood texture
 
   return (
-    <group position={[0, -2.5, 0]}>
+    <group position={position}>
       {/* Tabletop */}
       <mesh position={[0, 2, 0]} castShadow receiveShadow>
         <boxGeometry args={[10, 0.5, 6]} /> {/* width, thickness, depth */}
