@@ -3,7 +3,7 @@ import ClientScene from "./components/ClientScene";
 export default function Home() {
   return (
     <>
-      <main className="relative h-screen bg-white">
+      <main style={{background: 'white', height: '100vh' }}>
         <ClientScene />
       </main>
     </>

@@ -6,30 +6,23 @@ import { Leva } from "leva";
 import GlassSphere from "./GlassSphere";
 import { MTLLoader } from "three/examples/jsm/loaders/MTLLoader";
 import { TextureLoader } from "three/src/loaders/TextureLoader";
-
 import Table from "./Table";
 import Lights from "./Lights";
 import Terrain from "./Terrain";
+import GlassSphereWater from "./GlassSphereWater";
+import Aquarium from "./Aquarium";
 
 const Scene = () => {
   const orbitRef = useRef();
 
+  // Load giraffe model and materials
   const mtl = useLoader(MTLLoader, "/models/Giraffe.mtl");
   const obj = useLoader(OBJLoader, "/models/Giraffe.obj", (loader) => {
     mtl.preload();
     loader.setMaterials(mtl);
   });
 
-  const mtlRac = useLoader(MTLLoader, "/models/Raccoon/Mesh_Raccoon.mtl");
-  const objRac = useLoader(
-    OBJLoader,
-    "/models/Raccoon/Mesh_Raccoon.obj",
-    (loader) => {
-      mtlRac.preload();
-      loader.setMaterials(mtlRac);
-    }
-  );
-
+  // Apply giraffe texture
   useEffect(() => {
     const textureLoader = new TextureLoader();
     const texture = textureLoader.load("/models/Giraffe_BaseColor.png");
@@ -37,20 +30,11 @@ const Scene = () => {
       mtl.materials["Giraffe_mat"].map = texture;
       mtl.materials["Giraffe_mat"].needsUpdate = true;
     }
-    const RactextureLoader = new TextureLoader();
-    const textureRac = RactextureLoader.load(
-      "/models/Racoon/Raccoon_BaseColor.png"
-    );
-    if (mtlRac.materials["lambert2SG"]) {
-      mtlRac.materials["lambert2SG"].map = textureRac;
-      mtlRac.materials["lambert2SG"].needsUpdate = true;
-    }
-    console.log(mtlRac.materials);
-  }, [mtl, mtlRac]);
+  }, [mtl]);
 
   return (
     <>
-      <Leva />
+      <Leva /> {/* UI for adjusting controls */}
       <Canvas
         shadows
         gl={{
@@ -58,18 +42,31 @@ const Scene = () => {
           powerPreference: "high-performance",
         }}
       >
-        {/* <gridHelper args={[10, 10]} /> */}
 
+
+
+        {/* Scene Lights */}
         <Lights />
-        <primitive object={obj} scale={0.1} />
-        <primitive object={objRac} scale={0.01} />
 
-        {/* <GlassSphere /> */}
-        <Terrain />
+        {/* Table */}
         <Table />
+
+        {/* Terrarium (Glass Sphere) */}
+        <GlassSphere position={[0, 1.5, 0]} />
+        {/* <GlassSphereWater position={[0, 1.5, 0]} /> */}
+
+
+        {/* Aquarium positioned next to the Glass Sphere */}
+        {/* <Aquarium position={[2, 0.5, 0]} /> */}
+
+        {/* Giraffe inside the terrarium */}
+        <primitive object={obj} position={[0, 1.5, 0]} scale={0.1} />
+
+        {/* Ground Terrain */}
+        <Terrain />
+
+        {/* Controls */}
         <OrbitControls ref={orbitRef} />
-        {/* makes it crash :( */}
-        {/* <Environment files={"/studio.exr"} /> */}
       </Canvas>
     </>
   );
