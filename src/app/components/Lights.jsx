@@ -95,7 +95,7 @@ export default function Lights({ position }) {
         >
           <directionalLight
             ref={light}
-            intensity={1.0} // Increased intensity for better visibility
+            intensity={10.0} // Increased intensity for better visibility
             castShadow
             shadow-mapSize-width={1024}
             shadow-mapSize-height={1024}

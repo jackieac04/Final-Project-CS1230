@@ -17,6 +17,8 @@ import DayNightCycle from "./DayNightCycle";
 import SunLight from "./SunLight";
 import Lights from "./Lights";
 import CustomEnvironment from "./Env";
+import Clock from "./Clock";
+import AlarmClock from "./AlarmClock";
 
 
 const Scene = () => {
@@ -48,7 +50,7 @@ const Scene = () => {
 
   return (
     <>
-      <Leva />
+      <Leva collapsed />
       <Canvas
         shadows
         gl={{
@@ -71,19 +73,26 @@ const Scene = () => {
         <CameraSetup />
 
         {/* Table */}
-        <Table position={[0, 0, 0]} receiveShadow/>
+        <Table position={[0, -2, 0]} receiveShadow/>
 
         {/* Glass Bowl Stand */}
         <GlassBowlStand position={[0, 3.5, 0]} castShadow receiveShadow/>
+        
+        {/* Clock */}
+        <Clock 
+        position={[5, 3.45, 0]} 
+        rotation={[0, -Math.PI / 2, Math.PI / 10]}  // Rotate 45 degrees around Y-axis 
+        castShadow={true}  // Ensure shadows are cast
+        />
 
         {/* Glass Sphere positioned on top of the stand */}
-        <GlassSphere position={[0, 6.5, 0]} castShadow receiveShadow/>
+        <GlassSphere position={[0, 6.5, 0]} />
 
         {/* Giraffe inside the terrarium */}
         <primitive object={obj} position={[0, 6, 0]} scale={0.1} />
 
         {/* Ground Terrain */}
-        <TerrainTwo receiveShadow/>
+        {/* <TerrainTwo receiveShadow/> */}
 
         {/* Controls */}
         <OrbitControls ref={orbitRef} />
