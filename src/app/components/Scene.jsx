@@ -1,23 +1,33 @@
 import React, { useRef, useEffect, useState } from "react";
-import { Canvas, useLoader, useThree } from "@react-three/fiber";
+import { Canvas, useLoader } from "@react-three/fiber";
 import { OBJLoader } from "three/examples/jsm/loaders/OBJLoader";
 import { Environment, OrbitControls } from "@react-three/drei";
 import { Leva } from "leva";
-import GlassSphere from "./GlassSphere";
 import { MTLLoader } from "three/examples/jsm/loaders/MTLLoader";
 import { TextureLoader } from "three/src/loaders/TextureLoader";
+import * as THREE from "three";
+
+// Import your components
+import GlassSphere from "./GlassSphere";
 import Table from "./Table";
-import Lights from "./Lights";
-import Terrain from "./Terrain";
-import GlassSphereWater from "./GlassSphereWater";
-import Aquarium from "./Aquarium";
-import GlassBowlStand from "./GlassBowlStand";
 import TerrainTwo from "./TerrainTwo";
 import CameraSetup from './CameraSetup';
-import GlassJar from "./GlassJar"; 
+import GlassBowlStand from "./GlassBowlStand";
+import DayNightCycle from "./DayNightCycle";
+import SunLight from "./SunLight";
+import Lights from "./Lights";
+import CustomEnvironment from "./Env";
+
 
 const Scene = () => {
   const orbitRef = useRef();
+  const [lightingState, setLightingState] = useState({
+    skyColor: new THREE.Color(0x87CEEB),
+    sunPosition: [0, 50, 0],
+    spotLightIntensity: 1,
+    ambientIntensity: 0.5,
+    colorTemp: 6500
+  });
 
   // Load giraffe model and materials
   const mtl = useLoader(MTLLoader, "/models/Giraffe.mtl");
@@ -38,8 +48,7 @@ const Scene = () => {
 
   return (
     <>
-      
-      <Leva /> {/* UI for adjusting controls */}
+      <Leva />
       <Canvas
         shadows
         gl={{
@@ -47,24 +56,28 @@ const Scene = () => {
           powerPreference: "high-performance",
         }}
       >
-        <Environment preset="studio" background />
+        {/* Add your custom environment */}
+        {/* <CustomEnvironment /> */}
+        <Environment preset="sunset" background/>
+
+        {/* Day/Night Cycle Controller */}
+        {/* <DayNightCycle onCycleChange={handleCycleChange} /> */}
+
+        {/* Scene Background */}
+        {/* <SunLight /> */}
+        <Lights position={[0, 6, 10]} />
 
         {/* Set camera position */}
         <CameraSetup />
 
-        {/* Scene Lights */}
-        <Lights />
-
         {/* Table */}
         <Table position={[0, 0, 0]} receiveShadow/>
 
-         {/* Glass Bowl Stand */}
+        {/* Glass Bowl Stand */}
         <GlassBowlStand position={[0, 3.5, 0]} castShadow receiveShadow/>
 
         {/* Glass Sphere positioned on top of the stand */}
         <GlassSphere position={[0, 6.5, 0]} castShadow receiveShadow/>
-
-        {/* <GlassJar position={[0, 6.5, 0]} /> */}
 
         {/* Giraffe inside the terrarium */}
         <primitive object={obj} position={[0, 6, 0]} scale={0.1} />

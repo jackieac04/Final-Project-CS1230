@@ -1,98 +1,112 @@
-import React, { useRef } from "react";
-import { SpotLightHelper, DirectionalLightHelper } from "three";
-import { useHelper } from "@react-three/drei";
+import { OrbitControls, TransformControls, useHelper } from "@react-three/drei";
+import { useFrame, useThree } from "@react-three/fiber";
 import { useControls } from "leva";
+import { useEffect, useRef, useState } from "react";
+import { DirectionalLightHelper, Vector3 } from "three";
+
+export default function Lights({ position }) {
+  const light = useRef();
+  const lightGroup = useRef();
+  const transform = useRef();
+  const orbit = useRef();
+
+  useHelper(light, DirectionalLightHelper, 2);
+  const { gl } = useThree();
+
+  // Initial distance from center and light height
+  const [distanceFromCenter, setDistanceFromCenter] = useState(10);
+  const [lightHeight, setLightHeight] = useState(position[1]);
 
 
+  useEffect(() => {
+    if (transform?.current) {
+      const controls = transform.current;
+      controls.setMode("translate");
+      const callback = (event) => {
+        orbit.current.enabled = !event.value;
+      };
 
-export default function Lights() {
-  const spotLightRef = useRef();
-  const dirLightRef = useRef();
+      controls.addEventListener("dragging-changed", callback);
+      return () => {
+        controls.removeEventListener("dragging-changed", callback);
+      };
+    }
+  }, [transform]);
 
-  // Leva controls for lights
-  const { 
-    spotLightVisible, 
-    dirLightVisible, 
-    spotLightIntensity, 
-    dirLightIntensity,
-    shadowIntensity 
-  } = useControls({
-    // Light Visibility Toggles
-    spotLightVisible: {
-      label: 'Spot Light',
-      value: true
+  const [autoRotate, setAutoRotate] = useState(true);
+
+  useControls("AutoRotate", {
+    AutoRotate: {
+      value: true,
+      onChange: (v) => {
+        if (lightGroup?.current && !v) {
+          lightGroup.current.rotation.y = 0;
+        }
+        setAutoRotate(v);
+      },
     },
-    dirLightVisible: {
-      label: 'Directional Light',
-      value: true
-    },
-    // Light Intensity Controls
-    spotLightIntensity: {
-      label: 'Spot Light Intensity',
-      value: 1.5,
-      min: 0,
-      max: 5,
-      step: 0.1
-    },
-    dirLightIntensity: {
-      label: 'Directional Light Intensity',
-      value: 1.5,
-      min: 0,
-      max: 5,
-      step: 0.1
-    },
-    shadowIntensity: {
-      label: 'Shadow Bias',
-      value: 0.5,
-      min: 0,
-      max: 1,
-      step: 0.01
+  });
+
+  // Add controls for distance from center and light height
+  const { distance, height } = useControls("Light Controls", {
+    distance: { value: distanceFromCenter, min: 0, max: 20, step: 0.1 },
+    height: { value: lightHeight, min: 0, max: 20, step: 0.1 },
+  });
+
+  useEffect(() => {
+    setDistanceFromCenter(distance);
+    setLightHeight(height);
+  }, [distance, height]);
+
+  useEffect(() => {
+    gl.state.lightPos = new Vector3();
+  }, [gl]);
+
+  useFrame((state, dt) => {
+    if (autoRotate) {
+      // Increment angle for rotation
+      const angle = state.clock.getElapsedTime() * 0.5;
+
+      // Update the position of the light group based on the angle
+      lightGroup.current.position.x = Math.sin(angle) * distanceFromCenter;
+      lightGroup.current.position.z = Math.cos(angle) * distanceFromCenter;
+      lightGroup.current.position.y = lightHeight; // Use height from controls
+
+      if (light.current) {
+
+        const targetPosition = new Vector3(
+            lightGroup.current.position.y += 5,
+            lightGroup.current.position.x,
+            lightGroup.current.position.z);
+        light.current.getWorldPosition(gl.state.lightPos);
+      }
     }
   });
 
-  // Conditionally apply helpers
-  useHelper(spotLightVisible && spotLightRef, SpotLightHelper, "red");
-  useHelper(dirLightVisible && dirLightRef, DirectionalLightHelper, 2, "cyan");
-
   return (
     <>
-      {/* Ambient Light */}
-      <ambientLight 
-        intensity={1} 
-        color="#e2edff" 
-      />
+      <group ref={lightGroup} position={position}>
+        <TransformControls
+          showX={!autoRotate}
+          showY={!autoRotate}
+          showZ={!autoRotate}
+          enabled={!autoRotate}
+          ref={transform}
+        >
+          <directionalLight
+            ref={light}
+            intensity={1.0} // Increased intensity for better visibility
+            castShadow
+            shadow-mapSize-width={1024}
+            shadow-mapSize-height={1024}
+            shadow-camera-near={0.5}
+            shadow-camera-far={50}
+          />
+        </TransformControls>
+      </group>
 
-      {/* Spotlight */}
-      {spotLightVisible && (
-        <spotLight
-          ref={spotLightRef}
-          position={[5, 10, 5]}
-          angle={0.2}
-          penumbra={0.5}
-          intensity={spotLightIntensity}
-          castShadow
-          shadow-mapSize-width={1024}
-          shadow-mapSize-height={1024}
-          shadow-camera-near={0.5}
-          shadow-camera-far={50}
-          shadow-camera-fov={30}
-          shadow-bias={shadowIntensity}
-        />
-      )}
-
-      {/* Directional Light */}
-      {dirLightVisible && (
-        <directionalLight
-          ref={dirLightRef}
-          position={[5, 10, 5]}
-          intensity={dirLightIntensity}
-          castShadow
-          shadow-mapSize-width={1024}
-          shadow-mapSize-height={1024}
-          shadow-camera-near={0.5}
-          shadow-camera-far={50}
-        />
-      )}
+      <ambientLight intensity={0.3} />
+      <OrbitControls ref={orbit} />
     </>
   );
 }
