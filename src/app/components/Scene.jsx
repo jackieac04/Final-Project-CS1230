@@ -19,6 +19,8 @@ import Lights from "./Lights";
 import CustomEnvironment from "./Env";
 import Clock from "./Clock";
 import AlarmClock from "./AlarmClock";
+import DeskLamp from "./DeskLamp";
+import Firefly from "./Fireflies";
 
 
 const Scene = () => {
@@ -47,6 +49,20 @@ const Scene = () => {
       mtl.materials["Giraffe_mat"].needsUpdate = true;
     }
   }, [mtl]);
+
+    // Generate fireflies positions within the sphere
+    const generateFireflies = (count) => {
+      const fireflies = [];
+      for (let i = 0; i < count; i++) {
+        const x = Math.random() * 6 - 3; // Range -3 to 3
+        const y = Math.random() * 6 - 3; // Range -3 to 3
+        const z = Math.random() * 6 - 3; // Range -3 to 3
+        fireflies.push({ initialPosition: [x, y, z] });
+      }
+      return fireflies;
+    };
+  
+    const fireflies = generateFireflies(20); // Generate 20 fireflies
 
   return (
     <>
@@ -85,11 +101,23 @@ const Scene = () => {
         castShadow={true}  // Ensure shadows are cast
         />
 
+        {/* Desk Lamp */}
+        <DeskLamp position={[-5, 2.5, 2]} /> 
+
         {/* Glass Sphere positioned on top of the stand */}
         <GlassSphere position={[0, 6.5, 0]} />
-
+        
         {/* Giraffe inside the terrarium */}
-        <primitive object={obj} position={[0, 6, 0]} scale={0.1} />
+        <primitive object={obj} position={[0, 4, 0]} scale={0.1} />
+
+        {/* Fireflies */}
+        {/* {fireflies.map((firefly, index) => (
+          <Firefly 
+            key={index} 
+            initialPosition={firefly.initialPosition} 
+            boids={fireflies.map(f => ({ position: f.initialPosition }))} // Pass the other fireflies for boid behavior
+          />
+        ))} */}
 
         {/* Ground Terrain */}
         {/* <TerrainTwo receiveShadow/> */}

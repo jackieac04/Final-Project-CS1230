@@ -17,7 +17,6 @@ export default function Lights({ position }) {
   const [distanceFromCenter, setDistanceFromCenter] = useState(10);
   const [lightHeight, setLightHeight] = useState(position[1]);
 
-
   useEffect(() => {
     if (transform?.current) {
       const controls = transform.current;
@@ -48,9 +47,16 @@ export default function Lights({ position }) {
   });
 
   // Add controls for distance from center and light height
-  const { distance, height } = useControls("Light Controls", {
+  const { distance, height, brightness } = useControls("Light Controls", {
     distance: { value: distanceFromCenter, min: 0, max: 20, step: 0.1 },
     height: { value: lightHeight, min: 0, max: 20, step: 0.1 },
+    brightness: {
+      value: 2,
+      min: 0,
+      max: 30,
+      step: 0.1,
+      label: 'Light Intensity',
+    }
   });
 
   useEffect(() => {
@@ -73,15 +79,28 @@ export default function Lights({ position }) {
       lightGroup.current.position.y = lightHeight; // Use height from controls
 
       if (light.current) {
-
         const targetPosition = new Vector3(
-            lightGroup.current.position.y += 5,
-            lightGroup.current.position.x,
-            lightGroup.current.position.z);
+          lightGroup.current.position.x,
+          lightGroup.current.position.y + 5,
+          lightGroup.current.position.z
+        );
         light.current.getWorldPosition(gl.state.lightPos);
       }
     }
   });
+
+  useEffect(() => {
+    if (light.current) {
+      // Adjust shadow camera frustum
+      light.current.shadow.camera.left = -10;   // Increase left boundary
+      light.current.shadow.camera.right = 10;   // Increase right boundary
+      light.current.shadow.camera.top = 10;     // Increase top boundary
+      light.current.shadow.camera.bottom = -10; // Increase bottom boundary
+      light.current.shadow.camera.near = 0.5;
+      light.current.shadow.camera.far = 50;
+      light.current.shadow.mapSize.set(2048, 2048); // Increase shadow map size for better quality
+    }
+  }, [light]);
 
   return (
     <>
@@ -95,10 +114,10 @@ export default function Lights({ position }) {
         >
           <directionalLight
             ref={light}
-            intensity={10.0} // Increased intensity for better visibility
+            intensity={brightness} // Increased intensity for better visibility
             castShadow
-            shadow-mapSize-width={1024}
-            shadow-mapSize-height={1024}
+            shadow-mapSize-width={2048}
+            shadow-mapSize-height={2048}
             shadow-camera-near={0.5}
             shadow-camera-far={50}
           />
