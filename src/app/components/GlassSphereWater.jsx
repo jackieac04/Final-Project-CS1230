@@ -30,6 +30,9 @@ export default function GlassSphereWater({ position }) {
       // Create subtle wave/tilt effect
       const tiltAngle = Math.sin(time * 0.5) * Math.PI / 24; // Smaller angle
       waterRef.current.rotation.x = tiltAngle;
+      
+      // Optional: Add slight vertical wave to simulate liquid movement
+      waterRef.current.position.y = Math.sin(time) * 0.05;
     }
   });
 
@@ -45,22 +48,11 @@ export default function GlassSphereWater({ position }) {
         />
       </mesh>
 
-      {/* Inner hollow glass layer */}
-      <mesh scale={[0.95, 0.95, 0.95]}>
-        <sphereGeometry args={[2.5, 64, 64]} />
-        <MeshTransmissionMaterial
-          {...materialProps}
-          side={THREE.BackSide}
-          color="white"
-          attenuationColor="lightblue"
-        />
-      </mesh>
-
       {/* Water inside the sphere */}
       <group ref={waterRef}>
         <mesh 
-          position={[0, -1, 0]} // Positioned at bottom quarter inside sphere
-          scale={[0.85, 0.25, 0.85]} // Scaled to quarter volume inside sphere
+          position={[0, -1.5, 0]} // Position at bottom quarter
+          scale={[1.7, 0.5, 1.7]} // Scale to quarter volume
         >
           <sphereGeometry args={[2.5, 64, 64]} />
           <meshStandardMaterial
