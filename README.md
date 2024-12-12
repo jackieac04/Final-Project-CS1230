@@ -21,7 +21,7 @@ Our group, 🦒 made a terrarium for our final project with a slight twist- incl
 @React-three/fiber and @react-three/drei for our main features- loading models and frame by frame animation. We also used Leva for our sidebar controls.
 
 ## Running Locally
-cd into the main directory then type npm run dev
+```cd Final-Project-CS1230``` to load the current directory. Then run these commands ```npm install && npm run dev``` and open the local host website shown in the terminal ```http://localhost:XXXX```
 
 
 ## Gallery
